@@ -1,4 +1,5 @@
-# BEHAVIORAL-ANALYTICS-Splunk-
+# BEHAVIORAL-ANALYTICS AND USER ACCESS VISUALIZATION
+
 
 📌 Project Overview
 
@@ -38,6 +39,7 @@ This project solves that problem by creating visual dashboards & anomaly detecti
 🔔 Alerts: Turn reports into alerts for real-time monitoring
 
 📂 Project Structure
+
 ├── data/                 # Sample dataset used for Splunk ingestion
 
 ├── detections/           # SPL queries for anomaly detection
@@ -46,7 +48,6 @@ This project solves that problem by creating visual dashboards & anomaly detecti
 
 ├── screenshots/          # Dashboard screenshots
 
-└── README.md             # Project documentation
 
 ⚡ Technologies Used
 
