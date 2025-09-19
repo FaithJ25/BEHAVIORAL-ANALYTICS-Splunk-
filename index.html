@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #101820;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      text-align: center;
+      padding: 20px;
+      background: #5f073f;
+    }
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      padding: 20px;
+    }
+    .chart-box {
+      background: #1e1e2f;
+      padding: 15px;
+      border-radius: 12px;
+    }
+    canvas {
+      width: 100% !important;
+      height: 300px !important;
+    }
+    .kpi {
+      background: #1b2838;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 24px;
+    }
+    .tabs {
+      display: flex;
+      background: #333;
+      padding: 10px;
+    }
+    .tabs button {
+      flex: 1;
+      padding: 10px;
+      background: #444;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+    .tabs button.active {
+      background: #5f073f;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <h1>Security Dashboard</h1>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tablink active" data-tab="tab1">Overview</button>
+    <button class="tablink" data-tab="tab2">Suspicious Logins</button>
+    <button class="tablink" data-tab="tab3">Location Gauge</button>
+  </div>
+
+  <!-- Tab 1 -->
+  <div id="tab1" class="tab-content active">
+    <div class="dashboard">
+      <div class="kpi">🔐 Total Failed Logins: 142</div>
+      <div class="kpi">🚨 High Risk: 35</div>
+      <div class="kpi">⚠️ Medium Risk: 62</div>
+      <div class="kpi">🌍 Unknown Locations: 11</div>
+      <div class="chart-box"><canvas id="failedLoginsChart"></canvas></div>
+      <div class="chart-box"><canvas id="deviceUsageChart"></canvas></div>
+      <div class="chart-box" style="grid-column: span 2;">
+        <canvas id="anomalyTimeline"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 2 -->
+  <div id="tab2" class="tab-content">
+    <div class="chart-box">
+      <canvas id="suspiciousLogins"></canvas>
+    </div>
+    <div class="chart-box">
+      <canvas id="topUsersChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Tab 3 -->
+  <div id="tab3" class="tab-content">
+    <div class="chart-box">
+      <canvas id="locationGauge"></canvas>
+    </div>
+  </div>
+
+  <script>
+    // ===== Charts =====
+    const failedLoginsChart = new Chart(document.getElementById("failedLoginsChart"), {
+      type: "bar",
+      data: {
+        labels: ["US", "India", "Germany", "Unknown"],
+        datasets: [{ label: "Failed Logins", data: [40, 50, 20, 32], backgroundColor: "#e74c3c" }]
+      }
+    });
+
+    const deviceUsageChart = new Chart(document.getElementById("deviceUsageChart"), {
+      type: "pie",
+      data: {
+        labels: ["Desktop", "Mobile", "Tablet"],
+        datasets: [{ data: [55, 35, 10], backgroundColor: ["#3498db", "#2ecc71", "#9b59b6"] }]
+      }
+    });
+
+    const anomalyTimeline = new Chart(document.getElementById("anomalyTimeline"), {
+      type: "line",
+      data: {
+        labels: ["Jan", "Feb", "Mar", "Apr", "May"],
+        datasets: [{
+          label: "Avg Anomaly Score",
+          data: [0.3, 0.5, 0.6, 0.4, 0.8],
+          borderColor: "#f39c12",
+          fill: false
+        }]
+      }
+    });
+
+    const suspiciousLogins = new Chart(document.getElementById("suspiciousLogins"), {
+      type: "line",
+      data: {
+        labels: ["U1", "U2", "U3", "U4"],
+        datasets: [{ label: "Suspicious Scores", data: [0.6, 0.7, 0.8, 0.9], borderColor: "red" }]
+      }
+    });
+
+    const topUsersChart = new Chart(document.getElementById("topUsersChart"), {
+      type: "bar",
+      data: {
+        labels: ["UserA", "UserB", "UserC", "UserD"],
+        datasets: [{ label: "Failed Attempts", data: [50, 40, 30, 20], backgroundColor: "#16a085" }]
+      }
+    });
+
+    const locationGauge = new Chart(document.getElementById("locationGauge"), {
+      type: "doughnut",
+      data: {
+        labels: ["Known", "Unknown"],
+        datasets: [{ data: [90, 10], backgroundColor: ["#2ecc71", "#e74c3c"] }]
+      },
+      options: {
+        cutout: "70%"
+      }
+    });
+
+    // ===== Tabs =====
+    const tabs = document.querySelectorAll(".tablink");
+    const contents = document.querySelectorAll(".tab-content");
+    tabs.forEach(btn => {
+      btn.addEventListener("click", () => {
+        tabs.forEach(b => b.classList.remove("active"));
+        contents.forEach(c => c.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById(btn.dataset.tab).classList.add("active");
+      });
+    });
+  </script>
+</body>
+</html>
+
