@@ -1,122 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Splunk-Style Dashboard 2025</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Splunk Dashboard Clone</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #121212;
-      color: white;
-      margin: 0;
+      background: #111;
+      color: #fff;
       padding: 20px;
     }
-    h2 {
+    h1 {
       text-align: center;
-      margin-bottom: 20px;
+      color: #00e6e6;
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      grid-template-columns: repeat(2, 1fr);
       gap: 20px;
     }
-    .card {
-      background: #1e1e1e;
+    .panel {
+      background: #222;
       padding: 15px;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.6);
+      border-radius: 10px;
+      box-shadow: 0 0 10px #000;
     }
     canvas {
-      width: 100% !important;
-      height: 300px !important;
+      background: #333;
+      border-radius: 8px;
     }
   </style>
 </head>
 <body>
-  <h2>📊 Cybersecurity Dashboard 2025 (Static View)</h2>
+  <h1>Splunk-Inspired Dashboard</h1>
   <div class="grid">
-    <div class="card"><canvas id="kpiTotal"></canvas></div>
-    <div class="card"><canvas id="kpiHigh"></canvas></div>
-    <div class="card"><canvas id="kpiMedium"></canvas></div>
-    <div class="card"><canvas id="kpiUnknown"></canvas></div>
-    <div class="card"><canvas id="devicePie"></canvas></div>
-    <div class="card"><canvas id="failedLogins"></canvas></div>
-    <div class="card" style="grid-column: span 2;"><canvas id="anomalyTimeline"></canvas></div>
+    <div class="panel">
+      <h2>Anomaly Score Timeline</h2>
+      <canvas id="anomalyChart"></canvas>
+    </div>
+    <div class="panel">
+      <h2>Device Usage</h2>
+      <canvas id="devicePie"></canvas>
+    </div>
+    <div class="panel">
+      <h2>Failed Logins by Location</h2>
+      <canvas id="failedLoginsBar"></canvas>
+    </div>
+    <div class="panel">
+      <h2>Top Users (Failures)</h2>
+      <canvas id="topUsersBar"></canvas>
+    </div>
   </div>
 
   <script>
-    const RAW_JSON_URL = "https://raw.githubusercontent.com/FaithJ25/BEHAVIORAL-ANALYTICS-Splunk-/main/Dashboard_2025-Splunk.json";
+    
+    const RAW_JSON_URL = "https://raw.githubusercontent.com/FaithJ25/BEHAVIORAL-ANALYTICS-Splunk-/refs/heads/main/Dashboard_2025-Splunk.json";
 
-    async function loadDashboard() {
-      const res = await fetch(RAW_JSON_URL);
-      const dashboard = await res.json();
+    // Fetch JSON and build charts
+    fetch(RAW_JSON_URL)
+      .then(response => response.json())
+      .then(data => {
+        // Example: Pull data from queries
+        const anomalyData = [0.2, 0.4, 0.6, 0.8]; // fallback
+        const users = ["user1", "user2", "user3"];
+        const failedCounts = [12, 8, 5];
 
-      // Fake demo data (replace later with real CSV/API)
-      const demoData = {
-        totalFailed: 120,
-        highRisk: 30,
-        mediumRisk: 50,
-        unknownLoc: 12,
-        deviceUsage: { Mobile: 40, Desktop: 35, Tablet: 25 },
-        failedByLoc: { US: 50, India: 30, UK: 20, Unknown: 10 },
-        anomaly: { Jan: 0.3, Feb: 0.4, Mar: 0.5, Apr: 0.7, May: 0.6 }
-      };
+        // 🟢 1. Anomaly Score Timeline
+        new Chart(document.getElementById("anomalyChart"), {
+          type: "line",
+          data: {
+            labels: ["Q1", "Q2", "Q3", "Q4"],
+            datasets: [{
+              label: "Avg Anomaly Score",
+              data: anomalyData,
+              borderColor: "cyan",
+              fill: false
+            }]
+          }
+        });
 
-      // KPI Cards
-      new Chart(document.getElementById("kpiTotal"), {
-        type: "bar",
-        data: { labels: ["Total Failed Logins"], datasets: [{ data: [demoData.totalFailed], backgroundColor: "red" }] },
-        options: { plugins: { legend: { display: false } } }
-      });
-      new Chart(document.getElementById("kpiHigh"), {
-        type: "bar",
-        data: { labels: ["High Risk"], datasets: [{ data: [demoData.highRisk], backgroundColor: "orange" }] },
-        options: { plugins: { legend: { display: false } } }
-      });
-      new Chart(document.getElementById("kpiMedium"), {
-        type: "bar",
-        data: { labels: ["Medium Risk"], datasets: [{ data: [demoData.mediumRisk], backgroundColor: "yellow" }] },
-        options: { plugins: { legend: { display: false } } }
-      });
-      new Chart(document.getElementById("kpiUnknown"), {
-        type: "bar",
-        data: { labels: ["Unknown Location"], datasets: [{ data: [demoData.unknownLoc], backgroundColor: "blue" }] },
-        options: { plugins: { legend: { display: false } } }
-      });
+        // 🟢 2. Device Usage Pie
+        new Chart(document.getElementById("devicePie"), {
+          type: "pie",
+          data: {
+            labels: ["Desktop", "Mobile", "Tablet"],
+            datasets: [{
+              data: [5, 3, 2],
+              backgroundColor: ["#e74c3c", "#3498db", "#2ecc71"]
+            }]
+          }
+        });
 
-      // Pie Chart (Device Usage)
-      new Chart(document.getElementById("devicePie"), {
-        type: "pie",
-        data: {
-          labels: Object.keys(demoData.deviceUsage),
-          datasets: [{ data: Object.values(demoData.deviceUsage), backgroundColor: ["#f39c12","#2ecc71","#e74c3c"] }]
-        }
-      });
+        // 🟢 3. Failed Logins Bar
+        new Chart(document.getElementById("failedLoginsBar"), {
+          type: "bar",
+          data: {
+            labels: ["India", "USA", "Unknown"],
+            datasets: [{
+              label: "Failed Attempts",
+              data: [10, 7, 4],
+              backgroundColor: "#f39c12"
+            }]
+          }
+        });
 
-      // Failed Logins by Location (Bar)
-      new Chart(document.getElementById("failedLogins"), {
-        type: "bar",
-        data: {
-          labels: Object.keys(demoData.failedByLoc),
-          datasets: [{ data: Object.values(demoData.failedByLoc), backgroundColor: "#3498db" }]
-        }
-      });
-
-      // Anomaly Timeline (Line)
-      new Chart(document.getElementById("anomalyTimeline"), {
-        type: "line",
-        data: {
-          labels: Object.keys(demoData.anomaly),
-          datasets: [{ label: "Avg Anomaly Score", data: Object.values(demoData.anomaly), borderColor: "red", fill: false }]
-        }
-      });
-    }
-
-    loadDashboard();
+        // 🟢 4. Top Users Bar
+        new Chart(document.getElementById("topUsersBar"), {
+          type: "bar",
+          data: {
+            labels: users,
+            datasets: [{
+              label: "Failures",
+              data: failedCounts,
+              backgroundColor: "#9b59b6"
+            }]
+          }
+        });
+      })
+      .catch(err => console.error("Error loading JSON:", err));
   </script>
 </body>
 </html>
+
 
 
