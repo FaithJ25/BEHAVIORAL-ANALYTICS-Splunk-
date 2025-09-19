@@ -39,9 +39,13 @@ This project solves that problem by creating visual dashboards & anomaly detecti
 
 📂 Project Structure
 ├── data/                 # Sample dataset used for Splunk ingestion
+
 ├── detections/           # SPL queries for anomaly detection
+
 ├── dashboard/            # JSON template for Splunk Dashboard Studio
+
 ├── screenshots/          # Dashboard screenshots
+
 └── README.md             # Project documentation
 
 ⚡ Technologies Used
@@ -93,4 +97,4 @@ Connect with external threat intelligence feeds.
 👩‍💻 Author
 
 Faith Jackson Nkuba
-Cybersecurity Enthusiast | Splunk Project Developer
+
