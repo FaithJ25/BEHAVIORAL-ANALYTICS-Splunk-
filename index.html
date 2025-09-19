@@ -3,179 +3,120 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Security Dashboard</title>
+  <title>Splunk-Style Dashboard 2025</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #101820;
+      background: #121212;
       color: white;
       margin: 0;
-      padding: 0;
+      padding: 20px;
     }
-    h1 {
+    h2 {
       text-align: center;
-      padding: 20px;
-      background: #5f073f;
+      margin-bottom: 20px;
     }
-    .dashboard {
+    .grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
       gap: 20px;
-      padding: 20px;
     }
-    .chart-box {
-      background: #1e1e2f;
+    .card {
+      background: #1e1e1e;
       padding: 15px;
       border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.6);
     }
     canvas {
       width: 100% !important;
       height: 300px !important;
     }
-    .kpi {
-      background: #1b2838;
-      padding: 20px;
-      border-radius: 12px;
-      text-align: center;
-      font-size: 24px;
-    }
-    .tabs {
-      display: flex;
-      background: #333;
-      padding: 10px;
-    }
-    .tabs button {
-      flex: 1;
-      padding: 10px;
-      background: #444;
-      border: none;
-      color: white;
-      cursor: pointer;
-    }
-    .tabs button.active {
-      background: #5f073f;
-    }
-    .tab-content {
-      display: none;
-    }
-    .tab-content.active {
-      display: block;
-    }
   </style>
 </head>
 <body>
-  <h1>Security Dashboard</h1>
-
-  <!-- Tabs -->
-  <div class="tabs">
-    <button class="tablink active" data-tab="tab1">Overview</button>
-    <button class="tablink" data-tab="tab2">Suspicious Logins</button>
-    <button class="tablink" data-tab="tab3">Location Gauge</button>
-  </div>
-
-  <!-- Tab 1 -->
-  <div id="tab1" class="tab-content active">
-    <div class="dashboard">
-      <div class="kpi">🔐 Total Failed Logins: 142</div>
-      <div class="kpi">🚨 High Risk: 35</div>
-      <div class="kpi">⚠️ Medium Risk: 62</div>
-      <div class="kpi">🌍 Unknown Locations: 11</div>
-      <div class="chart-box"><canvas id="failedLoginsChart"></canvas></div>
-      <div class="chart-box"><canvas id="deviceUsageChart"></canvas></div>
-      <div class="chart-box" style="grid-column: span 2;">
-        <canvas id="anomalyTimeline"></canvas>
-      </div>
-    </div>
-  </div>
-
-  <!-- Tab 2 -->
-  <div id="tab2" class="tab-content">
-    <div class="chart-box">
-      <canvas id="suspiciousLogins"></canvas>
-    </div>
-    <div class="chart-box">
-      <canvas id="topUsersChart"></canvas>
-    </div>
-  </div>
-
-  <!-- Tab 3 -->
-  <div id="tab3" class="tab-content">
-    <div class="chart-box">
-      <canvas id="locationGauge"></canvas>
-    </div>
+  <h2>📊 Cybersecurity Dashboard 2025 (Static View)</h2>
+  <div class="grid">
+    <div class="card"><canvas id="kpiTotal"></canvas></div>
+    <div class="card"><canvas id="kpiHigh"></canvas></div>
+    <div class="card"><canvas id="kpiMedium"></canvas></div>
+    <div class="card"><canvas id="kpiUnknown"></canvas></div>
+    <div class="card"><canvas id="devicePie"></canvas></div>
+    <div class="card"><canvas id="failedLogins"></canvas></div>
+    <div class="card" style="grid-column: span 2;"><canvas id="anomalyTimeline"></canvas></div>
   </div>
 
   <script>
-    // ===== Charts =====
-    const failedLoginsChart = new Chart(document.getElementById("failedLoginsChart"), {
-      type: "bar",
-      data: {
-        labels: ["US", "India", "Germany", "Unknown"],
-        datasets: [{ label: "Failed Logins", data: [40, 50, 20, 32], backgroundColor: "#e74c3c" }]
-      }
-    });
+    const RAW_JSON_URL = "https://raw.githubusercontent.com/FaithJ25/REPO/main/Dashboard_2025-Splunk.json";
 
-    const deviceUsageChart = new Chart(document.getElementById("deviceUsageChart"), {
-      type: "pie",
-      data: {
-        labels: ["Desktop", "Mobile", "Tablet"],
-        datasets: [{ data: [55, 35, 10], backgroundColor: ["#3498db", "#2ecc71", "#9b59b6"] }]
-      }
-    });
+    async function loadDashboard() {
+      const res = await fetch(RAW_JSON_URL);
+      const dashboard = await res.json();
 
-    const anomalyTimeline = new Chart(document.getElementById("anomalyTimeline"), {
-      type: "line",
-      data: {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May"],
-        datasets: [{
-          label: "Avg Anomaly Score",
-          data: [0.3, 0.5, 0.6, 0.4, 0.8],
-          borderColor: "#f39c12",
-          fill: false
-        }]
-      }
-    });
+      // Fake demo data (replace later with real CSV/API)
+      const demoData = {
+        totalFailed: 120,
+        highRisk: 30,
+        mediumRisk: 50,
+        unknownLoc: 12,
+        deviceUsage: { Mobile: 40, Desktop: 35, Tablet: 25 },
+        failedByLoc: { US: 50, India: 30, UK: 20, Unknown: 10 },
+        anomaly: { Jan: 0.3, Feb: 0.4, Mar: 0.5, Apr: 0.7, May: 0.6 }
+      };
 
-    const suspiciousLogins = new Chart(document.getElementById("suspiciousLogins"), {
-      type: "line",
-      data: {
-        labels: ["U1", "U2", "U3", "U4"],
-        datasets: [{ label: "Suspicious Scores", data: [0.6, 0.7, 0.8, 0.9], borderColor: "red" }]
-      }
-    });
-
-    const topUsersChart = new Chart(document.getElementById("topUsersChart"), {
-      type: "bar",
-      data: {
-        labels: ["UserA", "UserB", "UserC", "UserD"],
-        datasets: [{ label: "Failed Attempts", data: [50, 40, 30, 20], backgroundColor: "#16a085" }]
-      }
-    });
-
-    const locationGauge = new Chart(document.getElementById("locationGauge"), {
-      type: "doughnut",
-      data: {
-        labels: ["Known", "Unknown"],
-        datasets: [{ data: [90, 10], backgroundColor: ["#2ecc71", "#e74c3c"] }]
-      },
-      options: {
-        cutout: "70%"
-      }
-    });
-
-    // ===== Tabs =====
-    const tabs = document.querySelectorAll(".tablink");
-    const contents = document.querySelectorAll(".tab-content");
-    tabs.forEach(btn => {
-      btn.addEventListener("click", () => {
-        tabs.forEach(b => b.classList.remove("active"));
-        contents.forEach(c => c.classList.remove("active"));
-        btn.classList.add("active");
-        document.getElementById(btn.dataset.tab).classList.add("active");
+      // KPI Cards
+      new Chart(document.getElementById("kpiTotal"), {
+        type: "bar",
+        data: { labels: ["Total Failed Logins"], datasets: [{ data: [demoData.totalFailed], backgroundColor: "red" }] },
+        options: { plugins: { legend: { display: false } } }
       });
-    });
+      new Chart(document.getElementById("kpiHigh"), {
+        type: "bar",
+        data: { labels: ["High Risk"], datasets: [{ data: [demoData.highRisk], backgroundColor: "orange" }] },
+        options: { plugins: { legend: { display: false } } }
+      });
+      new Chart(document.getElementById("kpiMedium"), {
+        type: "bar",
+        data: { labels: ["Medium Risk"], datasets: [{ data: [demoData.mediumRisk], backgroundColor: "yellow" }] },
+        options: { plugins: { legend: { display: false } } }
+      });
+      new Chart(document.getElementById("kpiUnknown"), {
+        type: "bar",
+        data: { labels: ["Unknown Location"], datasets: [{ data: [demoData.unknownLoc], backgroundColor: "blue" }] },
+        options: { plugins: { legend: { display: false } } }
+      });
+
+      // Pie Chart (Device Usage)
+      new Chart(document.getElementById("devicePie"), {
+        type: "pie",
+        data: {
+          labels: Object.keys(demoData.deviceUsage),
+          datasets: [{ data: Object.values(demoData.deviceUsage), backgroundColor: ["#f39c12","#2ecc71","#e74c3c"] }]
+        }
+      });
+
+      // Failed Logins by Location (Bar)
+      new Chart(document.getElementById("failedLogins"), {
+        type: "bar",
+        data: {
+          labels: Object.keys(demoData.failedByLoc),
+          datasets: [{ data: Object.values(demoData.failedByLoc), backgroundColor: "#3498db" }]
+        }
+      });
+
+      // Anomaly Timeline (Line)
+      new Chart(document.getElementById("anomalyTimeline"), {
+        type: "line",
+        data: {
+          labels: Object.keys(demoData.anomaly),
+          datasets: [{ label: "Avg Anomaly Score", data: Object.values(demoData.anomaly), borderColor: "red", fill: false }]
+        }
+      });
+    }
+
+    loadDashboard();
   </script>
 </body>
 </html>
+
 
